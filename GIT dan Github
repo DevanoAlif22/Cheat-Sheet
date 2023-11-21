@@ -1,0 +1,117 @@
+Istilah GIT dan GITHUB
+- Branch -> membuat percabangan (ketika ingin melakukan sesuatu tapi belum yakin)
+- Merger -> menggabungkan cabang atau branch menjadi satu jalur lagi
+- commit hash -> kode commut untuk mengenali
+- head master -> pointer menandakan kita di branch mana
+GIT
+
+Penting :
+git --version -> versi
+git init -> inisialisasi repo git (Default master)
+git add <file> -> menambahkan file ke dalam staging area
+git status -> untuk mengetahui repo kita ada yang berubah tidal
+git commit -> untuk melakukan commit atau save
+git config -> untuk memasukkan konfigurasi
+git branch -> untuk membuat cabang
+git help -> untuk membantu
+git log -> untuk melihat history commit
+git branch -> melihat percabangan
+git remote -v -> hak akses kita untuk meremote
+
+mempermudah :
+pwd -> melihat di dirgitectory mana
+ls -> list file
+clear -> hapus cmd
+git log -- (file) -> memunculkan commit sesuai file yang di cari
+
+Di dalam git mengenali 3 area
+- working tree -> folder kalian bekerja
+- staging area -> kasih tau git jika sudah melakukan perubahan
+- history -> jika sudah di commit
+(staging area dan history tersimpan di folder .git)
+working tree ke staging area : git add
+staging area ke history : git commit
+
+Cara kerja GIT
+- Masuk ke folder yang dipilih (git bash)
+- Jadikan folder ini jadi repo git menggunakan : git init (default branch master)
+- git otomatis membuat folder .git tapi tersembunyi
+- coba buat perubahan di folder dan jangan lupa save (otomatis di save oleh sistem tapi bukan git)
+- coba git status untuk mengetahui tadi yang di rubah apa saja
+- untracked itu maksudnya ada file yang masih belum di save git
+- simpan dulu perubahan di staging area dengan git add (nama file) atau git add . (untuk semua)
+- cek lagi dengan git status
+- JIKA ingin mengeluarkan lagi dari staging area pakai git rm (nama file)
+- lakukan commit : git commit
+- JIKA biasanya untuk pertama commit git tidak mengenali jadi ada git config sesuai perintah
+- JIKA gunakan email dan username github lebih baik (biar koneksinya gampang
+- kalau sudah mengenali git commit biasa : git commit -m "pesannya apa"
+- cek lagi git status seharusnya udah tidak ada yang di staging area
+- GITU TERUS BERULANG-ULANG
+
+JIKA PENGEN MENGEMBALIKAN COMMIT (Contoh restore file)
+- cek dulu kode commitnya misal : git log -- style.css
+- terus restore dengan kode depan commit dan nama file : git checkout 7665b -- style.css
+- dia masuk ke staging area jadi perlu di commit lagi
+
+GIT Branch
+- Inisialilasi git bash, git init
+- buat commit pertama dimana setiap commit pasti ada kode hash dan branch mana
+- misal kita buat branch baru diluar branch master : git branch (nama file) buat branch dosen dan mahasiswa
+- cek apa saja branch kita : git branch
+- coba cek lagi git log nanti ada beberapa branch dan sekarang kita ada di branch mana
+- agar lebih jelas tampilannya pakai ini (mode graph) : git log --all --decorate --oneline --graph 
+- misal ingin berpindah di branch lain caranya : git checkout (nama branch)
+- coba lakukan perubahan dan coba commit seperti biasa dan cek lagi git lognya
+- nanti terlihat percabangan yang ada
+
+GIT MERGE
+Ada dua cara : fast forward dan threeway merge
+*Fast forward merge terjadi ketika branch yang kita gabungkan berada dalam jalur langsung (direct path)
+- setelah punya banyak branch kita mungkin ingin menggabungkannya
+-  caranya tinggal masuk ke branch utama dan merge : git merge dosen
+- kalau mau meyakinkan apakah sudah di merge : git branch --merged 
+- jika sudah tidak butuh branchnya bisa di hapus : git branch -d dosen / -D jika memang ingin hapus branch yang belum dimerge
+
+*treeway merge jika tidak satu jalur langsung 
+- harus merge dan commit
+- masuk ke master
+- git merge mahasiswa
+- harus menuliskan mesagge
+
+GIT MERGE CONFLICT
+- buat branch baru yang sudah ada index html dan isi h1 misal
+- ubah isi h1 di branch yang baru lalu commit
+- ubah juga isi h1 di main lalu commit juga
+- merge dari main ke branch baru
+- nanti perbaiki conflict di teks editor
+- save setelah selesai
+- seperti biasa git add . dan commit
+
+GIT KEMBALI KE COMMIT SEBELUMNYA
+- cek dulu menggunakan git log
+- git checkout (kode 7 digit awal)
+- kita berada di detached head (artinya kita lepas dari branch)
+- coba cek di git log
+- kita bisa cek di teks editor
+- bisa pindah lagi ke main/master
+MUNGKIN KITA INGIN KEMBALI MENGULANG
+- masuk ke branch yang di tuju sesuai commit
+- buat branch baru
+- terus checkout
+- saat commit akan selalu membuat cabang di branch itu
+
+GIT REMOTE (Contoh github)
+- buat repo baru di github
+- clone di lokal kalian
+- cek remote menggunakan git remote -v
+- git push (untuk mendorong file lokal ke github)
+- git pull (untuk menarik file yang ada di github)
+
+Kerja sama tim di GITHUB
+- buat repositori baru
+- add contributor
+- buat branch untuk masing-masing kontributor
+- kontributor melakukan push ke branch nya masing-masing
+- pemilik repo akan cek di pull request dan melakukan merge
+- biasanya ketika kita mau push tp ketinggalan commit di github maka di suruh untuk pull dulu
