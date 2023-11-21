@@ -1,0 +1,213 @@
+BELAJAR LARAVEL (FILE CRUD_LARAVEL)
+
+1. Create table migration
+caranya -> php artisan make:migration create_students_table
+
+2. Add table migration
+caranya -> php artisan make:migration add_gender_column_to_students_table
+
+3. Update table migration
+caranya -> php artisan make:migration change_gender_in_students_table
+
+4. Untuk menambahkan table ke database
+caranya -> php artisan migrate
+
+5. Untuk mundur table ke database
+caranya -> php artisan migrate:rollback
+
+6. Membuat relasi
+caranya -> contoh relasinya berupa id ber tipe integer
+$table->unsignedBigInterger('class_id')->required()
+foreign('class_id')->references('id)->on('class')
+
+7. Konsep MVC
+Model -> Controller -> View
+View : Menampilkan ke dalam bentuk website
+Model : Berhubungan dengan database (nama table, field apa saya yg di isi, relasi dll)
+Controller : Penghubung antara model dan view, kita bisa mengelola data disini
+
+8. Membuat MVC
+Model -> php artisan make:model Student
+Controller -> php artisan make:controller StudentController
+
+9. Jenis Query di laravel
+Elequent ORM (rekomendasi) -> tidak pakai sytax sql, sudah ada function dari laravel 
+Query Builder (masih oke) -> pakai syntax sql,
+Raw Query (tidak rekomendasi) -> mudah terkena sql inject
+
+10. Contoh Query di laravel
+Elequent ORM -> Student::all();
+
+11. Mengisi database otomatis
+Seeder -> mengisi table untuk pertama kali (masih kosong),
+php artisan make:Seeder ClassSeeder
+php artisan db:seed --class=ClassSeeder
+php artisan db:seed (ini menjalankan semua seeder tapi perlu setting di databaseSeeder)
+Factory Faker -> bisa dibuat di seeder (tapi tetep buat factory), bisa membuat data secara random
+php artisan make:Factory StudentFactory
+
+12. CRUD Laravel
+elequent (rekomendasi) -> harus ada model dan fillable nya
+Student::all()
+Student::create(['name' => 'Devano'])
+Student::update(['name' => 'Devano'])
+Student::where('name', '=', 'Devano')->update(['name' => 'Davano']);
+Student::find(2)->update(['name' => 'Davano']);
+Student::where('name', '=','Nicholaus Hintz')->delete();
+Student::find(1)->delete();
+
+query builder -> pakai DB
+DB::table('students')->get()
+DB::table('students')->create(['name' => 'Devano'])
+DB::table('students')->where('name', '=','Devanooo')->update(['name' => 'Devano']);
+DB::table('students')->where('name', '=','Nicholaus Hintz')->delete();
+
+13. Collection untuk mempermudah (PENTING)
+Link -> https://laravel.com/docs/9.x/collections
+nilai jumlah -> count
+total nilai -> array_sum
+rata-rata -> collect($arr)->avg()
+min/max -> collect($arr)->min()
+jadi json -> collect($arr)->toJson()
+cari apakah ada sesuatu -> collect($arr)->contains(4)
+bisa dijadikan function contoh ->
+$contoh = collect($arr)->contains(function($value) {
+            return $value > 10;
+});
+perbandingan isi 2 array (di array A apakah ada nilai yang tidak ada di array B) ->
+ $restaurantA = ['Bakso','Mie ayam',"Rawon"];
+ $restaurantB = ['Bakso','Mie ayam',"Siomay"];
+ dd(collect($restaurantA)->diff($restaurantB));
+ // hasilnya rawon
+filter untuk menyaring ->
+$arr = [1,2,3,4,5,6,7,8,9,10];
+collect($arr)->filter(function($value) {return $value > 5;})->all()
+collect($arr)->filter(function($value) {return $value > 5;})->min()
+collect($arr)->filter(function($value) {return $value > 5;})->avg()
+pluck mencari data array di dalam array ->
+$student = [
+            ['nama' => 'Devano', 'umur' => 17],
+            ['nama' => 'Davano', 'umur' => 18],
+            ['nama' => 'Fery', 'umur' => 19],
+            ['nama' => 'Renanda', 'umur' => 20],
+];
+dd(collect($student)->pluck('nama')->all());
+// hasilnya [Devano,Davano,Fery,Renanda]
+map (perulangan) untuk menambah,dikali dua, mencari data dll ->
+$arr = [1,2,3,4,5,6,7,8,9,10];
+dd(collect($arr)->map(function($value) {return $value * 2;})->all());
+// hasilnya [2,4,6,8,10,12,14,16,18,20]
+
+14. Relationship (INNER JOIN)
+Class -> Students (One To Many) : class pakai hasMany ke student -> 1 untuk banyak
+Students -> Class (One To Many Inverse/Many to One) : student pakai belongsTo ke class -> banyak untuk 1  
+Many to many contoh ada 3 table : student,extra,student_extra
+student -> extra  (many to many) : student pakai belongsToMany ke tabel pivot (student_extra) 
+extra -> student  (many to many) : student pakai belongsToMany ke tabel pivot (student_extra)
+
+15. Nested Relationship (Inner join 2/berkali-kali)
+table : student -> class -> teacher
+teacher -> class : pakai hasMany
+class -> teacher : pakai belongs to
+student->class->teacher : tinggal panggil aja yang class karena class udah terhubung dengan teacher
+
+
+16. 2 Macam query
+Lazy loading -> cocok menampilkan data yang tidak pakai relasi (tidak cocok untuk relasi)
+$student = Student::all();
+Eager loading -> cocok untuk menampilkan data dengan relasi (tidak cocok untuk tidak relasi)
+$student::with('class')->get();
+
+17. FIND
+Student::find(1) -> jika ada error atau not found akan tampil halaman error
+Student::findOrFile(1) -> jika ada error atau not found akan tampil halaman 404
+
+18. CRUD
+create : ada dua cara
+cara satu-satu -> 
+        // $student = new Student;
+        // $student->name = $request->name;
+        // $student->gender = $request->gender;
+        // $student->npm = $request->npm;
+        // $student->class_id = $request->class_id;
+        // $student->save();
+cara mass assigment ->
+// butuh setting afailable di model
+Update :
+cara satu-satu ->
+$student = Student::findOrFail($id);
+$student->name = $request->name;
+$student->npm = $request->npm;
+// dan seterusnya
+$student->save();
+mass assigment ->
+$student = Student::findOrFail($id);
+$student->update($request->all());
+return redirect('/student');
+$student = Student::create($request->all());
+Delete : 
+elequent ->
+$student = Student::findOrFail($id);
+$student->delete();
+query builder ->
+$student = DB::table('students')->where('id',$id)->delete();
+
+19. Session Flash data
+di controller ->
+Session:flash('status','sucess');
+Session:flash('message','sucess add data!');
+di blade ->
+Session::has('status');
+Session::get('message');
+Session::get('message');
+Session::get('message');
+Session::get('message');
+Session::get('message');
+
+20. Validation
+lewat controller (tidak bisa bebas/custom) ->
+$validated = $request->validate([
+'npm' => 'required|unique:students|max:10',
+'name' => 'required|unique:students|max:15',
+'gender' => 'required|max:1',
+'class_id' => 'required',
+ ]);
+custom ->
+php artisan make:Request StudentCreateValidation
+authorize nya ganti true
+settting rules,attributes(opsional), dan message(opsional)
+
+21. pagination
+controller tambahkan ->
+$student = Student::with('class')->orderBy('created_at', 'desc')->paginate(15);
+blade tambahkan ->
+{{$student->links()}}
+App\Providers\AppServiceProvider tambahkan ->
+Paginator::useBootstrapFive();
+
+22. searching
+buat form dengan input search
+ambil keyword dan cari berdasarkan keyword di controller
+tambahkan di blade withQueryString()
+
+23. Session 
+Session yang berakhir sampai mereka logout atau server berhenti
+menambahkan ->
+session()->put('student_form_filled', true);
+melupakan ->
+session()->forget('student_form_filled');
+Session yang hilang ketika di refres
+session flash (nomer 19)
+
+24. middleware login
+bisa tiru di dokumentaasi laravel yang manual
+return route('login') -> tambahkan di route web name('login')
+lohout juga tiru di laravel
+
+25. Algoritma login
+Register - verifikasi link Gmail - login
+Buat user register dengan verify key str uniq 100 - kirim ke email - buat route verify - cek apakah get verif nya ada di database - jika ada tambahkan email verify at - redirect ke login sukses
+Loginnya email verify at tidak sama dengan null
+
+LARAVEL API
+1. buat route di api
